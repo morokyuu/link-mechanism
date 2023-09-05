@@ -8,9 +8,9 @@ Created on Tue Sep  5 21:54:31 2023
 import numpy as np
 import matplotlib.pyplot as plt
 
-r = 0.02
+r = 0.012
 L = 0.1
-Lx = 0.05
+Lx = 0.07
 NUM = 20
 
 th = np.linspace(0.001,np.pi*2,NUM)
