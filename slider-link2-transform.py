@@ -24,14 +24,14 @@ def tr(x,y):
         [          0,          0, 1.0]
         ])
 
-def drawLine(ax,x0,y0,x1,y1):
-    ax.plot(np.array([x0,x1]),np.array([y0,y1]))
+def drawLine(ax,x0,y0,x1,y1,color='blue'):
+    ax.plot(np.array([x0,x1]),np.array([y0,y1]),color=color)
 
-def drawPolyline(ax,poly):
+def drawPolyline(ax,poly,color='blue'):
     poly = poly.T
     poly = np.vstack((poly,poly[0,:]))
     for i in range(poly.shape[0]-1):
-        drawLine(ax,poly[i,0],poly[i,1],poly[i+1,0],poly[i+1,1])
+        drawLine(ax,poly[i,0],poly[i,1],poly[i+1,0],poly[i+1,1],color=color)
 
 r = 0.012
 L = 0.1
@@ -79,6 +79,7 @@ for i in range(df.shape[0]):
     x,y = df['x'][i],df['y'][i]
     px,py = df['px'][i],df['py'][i]
     
+    ax.scatter(Lx,0)
     ax.scatter(x,y)
     ax.scatter(px,py)
     drawLine(ax, x,y,px,py)
@@ -90,7 +91,7 @@ for i in range(df.shape[0]):
     ax.set_ylim([-0.1,0.1])
     ax.set_aspect('equal')
     ax.grid()
-    # plt.savefig(f'{i}.png')
+    plt.savefig(f'{i}.png')
 
 
 #mat = np.vstack([x,y,px,py,th,alpha])
