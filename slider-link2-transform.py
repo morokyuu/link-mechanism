@@ -70,12 +70,27 @@ a= 0.2
 box = np.array([[r,r,-r,-r],[r,-r,-r,r],[1,1,1,1]])
 
 for i in range(df.shape[0]):
+    fig,ax = plt.subplots()
+    
     a = df['alpha'][i]
     px = df['px'][i]
     py = df['py'][i]
     
+    x,y = df['x'][i],df['y'][i]
+    px,py = df['px'][i],df['py'][i]
+    
+    ax.scatter(x,y)
+    ax.scatter(px,py)
+    drawLine(ax, x,y,px,py)
+    
     boxd = tr(px,py) @ rotZ(a) @ box
     drawPolyline(ax, boxd)
+
+    ax.set_xlim([-0.1,0.3])
+    ax.set_ylim([-0.1,0.1])
+    ax.set_aspect('equal')
+    ax.grid()
+    # plt.savefig(f'{i}.png')
 
 
 #mat = np.vstack([x,y,px,py,th,alpha])
