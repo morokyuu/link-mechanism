@@ -68,17 +68,14 @@ a= 0.2
 
 
 box = np.array([[r,r,-r,-r],[r,-r,-r,r],[1,1,1,1]])
-boxd = rotZ(a) @ tr(x,y) @ box
 
-drawPolyline(ax,boxd)
-
-# boxd = boxd.T
-# for i in range(boxd.shape[0]-1):
-#     drawLine(ax,boxd[i,0],boxd[i,1],boxd[i+1,0],boxd[i+1,1])
-#     print(i)
-
-exit()
-
+for i in range(df.shape[0]):
+    a = df['alpha'][i]
+    px = df['px'][i]
+    py = df['py'][i]
+    
+    boxd = tr(px,py) @ rotZ(a) @ box
+    drawPolyline(ax, boxd)
 
 
 #mat = np.vstack([x,y,px,py,th,alpha])
