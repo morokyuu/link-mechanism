@@ -94,6 +94,26 @@ for i in range(df.shape[0]):
     plt.savefig(f'{i}.png')
 
 
+#   ^^^ MEMO ---
+# df.iloc[18]
+# Out[385]: 
+# x        0.011350
+# y       -0.003896
+# alpha   -0.081998
+# px       0.110988
+# py       0.004601
+# Name: 18, dtype: float64
+
+# df.iloc[18].loc['alpha']
+# Out[386]: -0.08199839717794351
+
+
+
+
+
+
+
+
 #mat = np.vstack([x,y,px,py,th,alpha])
 #dat = mat.T
 
