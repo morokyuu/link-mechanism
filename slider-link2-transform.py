@@ -8,6 +8,7 @@ Created on Tue Sep  5 23:03:11 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 def rotZ(th):
     return np.array([
@@ -23,48 +24,65 @@ def tr(x,y):
         [          0,          0, 1.0]
         ])
 
+def drawLine(ax,x0,y0,x1,y1):
+    ax.plot(np.array([x0,x1]),np.array([y0,y1]))
 
-
+def drawPolyline(ax,poly):
+    poly = poly.T
+    poly = np.vstack((poly,poly[0,:]))
+    for i in range(poly.shape[0]-1):
+        drawLine(ax,poly[i,0],poly[i,1],poly[i+1,0],poly[i+1,1])
 
 r = 0.012
 L = 0.1
-Lx = 0.07
+Lx = 0.055
 NUM = 20
+
+df = pd.DataFrame()
 
 th = np.linspace(0.001,np.pi*2,NUM)
 x = r * np.cos(th)
 y = r * np.sin(th)
 alpha = np.arctan(y/Lx - x)
-
 l = np.sqrt((Lx - x)**2 + (0 - y)**2)
-
 px = (L - l)*np.cos(-alpha) + Lx
 py = (L - l)*np.sin(-alpha)
 
-boxpt = []
-for a,x,y in zip(alpha,x,y):
-    R = rotZ(a) @ tr(x,y)
-    box = np.array([[r,r,-r,-r],[r,-r,r,-r],[1,1,1,1]])
-    print( R @ box )
-    # print(t)
-    boxpt.append(R @ box)
-
-exit()
-
+df['x'] = x
+df['y'] = y
+df['alpha'] = alpha
+df['px'] = px
+df['py'] = py
 
 fig,ax = plt.subplots()
-ax.scatter(x,y)
 ax.scatter(Lx,0)
-# ax.scatter()
-ax.scatter(px,py)
+ax.scatter(df['x'],df['y'])
+ax.scatter(df['px'],df['py'])
 ax.set_aspect('equal')
 ax.grid()
 
 
+x = 0.04
+y = 0.005
+a= 0.2
 
 
-mat = np.vstack([x,y,px,py,th,alpha])
-dat = mat.T
+box = np.array([[r,r,-r,-r],[r,-r,-r,r],[1,1,1,1]])
+boxd = rotZ(a) @ tr(x,y) @ box
+
+drawPolyline(ax,boxd)
+
+# boxd = boxd.T
+# for i in range(boxd.shape[0]-1):
+#     drawLine(ax,boxd[i,0],boxd[i,1],boxd[i+1,0],boxd[i+1,1])
+#     print(i)
+
+exit()
+
+
+
+#mat = np.vstack([x,y,px,py,th,alpha])
+#dat = mat.T
 
 
 # def drawLine(ax,x0,y0,x1,y1):
