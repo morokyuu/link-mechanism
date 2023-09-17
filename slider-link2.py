@@ -16,7 +16,7 @@ NUM = 20
 th = np.linspace(0.001,np.pi*2,NUM)
 x = r * np.cos(th)
 y = r * np.sin(th)
-alpha = np.arctan(y/Lx - x)
+alpha = np.arctan(y/(Lx - x))
 
 # xl = L + x
 # yl = np.zeros((1,NUM))
