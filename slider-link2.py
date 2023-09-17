@@ -8,9 +8,10 @@ Created on Tue Sep  5 21:54:31 2023
 import numpy as np
 import matplotlib.pyplot as plt
 
-r = 0.012
-L = 0.1
-Lx = 0.07
+r = 30
+L = 250
+Lx = 175
+
 NUM = 20
 
 th = np.linspace(0.001,np.pi*2,NUM)
@@ -50,11 +51,12 @@ for n,m in enumerate(dat[:-1,:]):
     fig,ax = plt.subplots()
     ax.scatter(m[0],m[1])
     ax.scatter(m[2],m[3])
+    ax.scatter(Lx,0)
     drawLine(ax, m[0],m[1],m[2],m[3])
-    ax.set_xlim([-0.1,0.3])
-    ax.set_ylim([-0.1,0.1])
+    ax.set_xlim([-200,400])
+    ax.set_ylim([-200,200])
     ax.set_aspect('equal')
     ax.grid()
-    plt.savefig(f'{n}.png')
+    # plt.savefig(f'{n}.png')
 
 
