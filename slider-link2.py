@@ -7,20 +7,18 @@ Created on Tue Sep  5 21:54:31 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
 r = 30
 L = 250
-Lx = 175
+Lx = 90
 
-NUM = 20
+NUM = 50
 
 th = np.linspace(0.001,np.pi*2,NUM)
 x = r * np.cos(th)
 y = r * np.sin(th)
 alpha = np.arctan(y/(Lx - x))
-
-# xl = L + x
-# yl = np.zeros((1,NUM))
 
 l = np.sqrt((Lx - x)**2 + (0 - y)**2)
 
@@ -28,16 +26,14 @@ px = (L - l)*np.cos(-alpha) + Lx
 py = (L - l)*np.sin(-alpha)
 
 
+fig,ax = plt.subplots()
+ax.scatter(x,y)
+ax.scatter(Lx,0)
+ax.scatter(px,py)
+ax.set_aspect('equal')
+ax.grid()
 
-# fig,ax = plt.subplots()
-# ax.scatter(x,y)
-# ax.scatter(Lx,0)
-# # ax.scatter(xl,yl)
-# ax.scatter(px,py)
-# ax.set_aspect('equal')
-# ax.grid()
-
-
+sys.exit()
 
 
 mat = np.vstack([x,y,px,py,th,alpha])
