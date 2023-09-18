@@ -9,15 +9,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-r = 30
-L = 250
-Lx = 90
+r = 25
+L = 260
+Lx = 120
 
 NUM = 50
 
 th = np.linspace(0.001,np.pi*2,NUM)
-x = r * np.cos(th)
-y = r * np.sin(th)
+x = r * np.cos(th)*2
+y = r * np.sin(th)*0.7
 alpha = np.arctan(y/(Lx - x))
 
 l = np.sqrt((Lx - x)**2 + (0 - y)**2)
