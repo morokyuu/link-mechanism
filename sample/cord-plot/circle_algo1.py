@@ -9,7 +9,7 @@ from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 
-with Image.open("sample.png") as im:
+with Image.open("shoose.png") as im:
     size = im.size
     img = np.array(im)
 
@@ -31,17 +31,18 @@ def circle_search(R, ox,oy):
 
 
 
-x,y = circle_search(10, 75, 75)
-
-# #preview
-# img[x,y] = 30
-# plt.imshow(img)
-
+x,y = circle_search(10, 302, size[0]/2)
 
 for deg,(tx,ty) in enumerate(zip(x,y)):
     print(img[tx,ty])
     if img[tx,ty] < 100:
-        print(deg)
+        print(f"{deg} tx,ty={tx},{ty}")
         break
 
+
+# img[x,y] = 0
+
+plt.imshow(img)
+
+plt.scatter(ty,tx)
 
