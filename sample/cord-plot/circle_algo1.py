@@ -18,31 +18,31 @@ img = img[:,:,0]
 
 
 
-def circle_search(R, ox,oy):
+def circle_search(R, oy,ox):
     th = np.linspace(0, 2*np.pi, 360)
-    x = R * np.cos(th) + ox
-    y = R * np.sin(th) + oy
-    x = x.astype(int)
+    y = R * np.cos(th) + oy
+    x = R * np.sin(th) + ox
     y = y.astype(int)
-    return x,y
+    x = x.astype(int)
+    return y,x
 
 
 
 
 
 
-x,y = circle_search(10, 302, size[0]/2)
+y,x = circle_search(10, 302, size[0]/2)
 
-for deg,(tx,ty) in enumerate(zip(x,y)):
-    print(img[tx,ty])
-    if img[tx,ty] < 100:
+for deg,(ty,tx) in enumerate(zip(y,x)):
+    print(img[ty,tx])
+    if img[ty,tx] < 100:
         print(f"{deg} tx,ty={tx},{ty}")
         break
 
 
-# img[x,y] = 0
+# img[y,x] = 0
 
 plt.imshow(img)
 
-plt.scatter(ty,tx)
+plt.scatter(tx,ty)
 
