@@ -19,7 +19,7 @@ img = img[:,:,0]
 
 
 def circle_search(R, ox,oy):
-    th = np.linspace(0, 2*np.pi, 150)
+    th = np.linspace(0, 2*np.pi, 360)
     x = R * np.cos(th) + ox
     y = R * np.sin(th) + oy
     x = x.astype(int)
@@ -32,7 +32,14 @@ def circle_search(R, ox,oy):
 
 
 x,y = circle_search(10, 75, 75)
-img[x,y] = 30
 
-plt.imshow(img)
+# #preview
+# img[x,y] = 30
+# plt.imshow(img)
+
+
+pix = []
+for deg,(tx,ty) in enumerate(zip(x,y)):
+    pix.append(img[tx,ty])
+
 
