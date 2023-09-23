@@ -38,8 +38,10 @@ x,y = circle_search(10, 75, 75)
 # plt.imshow(img)
 
 
-pix = []
 for deg,(tx,ty) in enumerate(zip(x,y)):
-    pix.append(img[tx,ty])
+    print(img[tx,ty])
+    if img[tx,ty] < 100:
+        print(deg)
+        break
 
 
