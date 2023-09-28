@@ -27,22 +27,28 @@ def circle_search(R, oy,ox):
     return y,x
 
 
+def onetime(ox,oy):
+    y,x = circle_search(30, oy, ox)
+    for deg,(ty,tx) in enumerate(zip(y,x)):
+        # print(img[ty,tx])
+        if img[ty,tx] < 100:
+            print(f"{deg} tx,ty={tx},{ty}")
+            px,py = tx,ty
+            break
+    return px,py
 
 
-
-
-y,x = circle_search(10, 302, size[0]/2)
-
-for deg,(ty,tx) in enumerate(zip(y,x)):
-    print(img[ty,tx])
-    if img[ty,tx] < 100:
-        print(f"{deg} tx,ty={tx},{ty}")
-        break
-
+# ox,oy = 10, 302
+ox,oy = size[0]/2, 302
+for _ in range(10):
+    print(f"{ox},{oy}")
+    ox,oy = onetime(ox,oy)
+    
+    plt.imshow(img)
+    plt.scatter(ox,oy)
 
 # img[y,x] = 0
 
-plt.imshow(img)
 
-plt.scatter(tx,ty)
+
 

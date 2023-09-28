@@ -17,9 +17,28 @@ with Image.open("shoose.png") as im:
 # fig,ax = plt.subplots()
 
 ## 10pixおきに列を取り出す　縦に圧縮したような画像になる
-arr = img[10:size[1]:10,:,0]
+row_num = np.arange(50,size[1],10)
+arr = np.array([img[a,:,0] for a in row_num])
 
-# arr = arr[arr < 255/2.0]
+
+pos = []
+for r,ar in enumerate(arr):
+    left, right = 0,0
+    print(f"row={r}")
+    for i,a in enumerate(ar):
+        if a < 100:
+            left = i
+            break
+    
+    for i in range(ar.shape[0]-1,-1,-1):
+        if ar[i] < 100:
+            right = i
+            break
+    
+    print(f'left,right = {left},{right}')
+            
+            
+
 
 
 # for p in pitch:
