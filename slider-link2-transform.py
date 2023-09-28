@@ -9,6 +9,7 @@ Created on Tue Sep  5 23:03:11 2023
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import sys
 
 def rotZ(th):
     return np.array([
@@ -33,10 +34,62 @@ def drawPolyline(ax,poly,color='blue'):
     for i in range(poly.shape[0]-1):
         drawLine(ax,poly[i,0],poly[i,1],poly[i+1,0],poly[i+1,1],color=color)
 
-r = 0.012
-L = 0.1
-Lx = 0.055
+
+r = 12
+L = 100
+Lx = 55
 NUM = 20
+
+class Link:
+    def __init__(self,th):
+        self.x = r * np.cos(th) * 2
+        self.y = r * np.sin(th) * 2
+        
+        self.alpha = np.arctan(self.y/(Lx - self.x))
+        l = np.sqrt((Lx - self.x)**2 + (0 - self.y)**2)
+        self.px = (L - l)*np.cos(-self.alpha) + Lx
+        self.py = (L - l)*np.sin(-self.alpha)
+        
+        self.xy1 = np.vstack((self.x,self.y,1))
+        self.pxy1 = np.vstack((self.px,self.py,1))
+        self.slider1 = np.vstack((Lx,0,1))
+    
+    def getLinkCord(self):
+        return tr(self.px, self.py) @ rotZ(self.alpha)
+    
+    def dot(self,H):
+        self.xy1 = self.xy1 @ H
+        self.pxy1 = self.pxy1 @ H
+        self.slider1 = self.slider1 @ H
+    
+    def draw(self,ax):
+        ax.scatter(self.xy1[0],self.xy1[1])
+        ax.scatter(self.pxy1[0],self.pxy1[1])
+        ax.scatter(self.slider1[0],self.slider1[1])
+
+
+for th in np.linspace(0, np.pi*2, 100):
+    
+    fig,ax = plt.subplots()
+    
+    l = Link(th)
+    l.draw(ax)
+    
+    ax.set_xlim([-100,200])
+    ax.set_ylim([-100,100])
+    ax.set_aspect('equal')
+    ax.grid()
+    
+    plt.show()
+    
+    plt.close()
+
+
+sys.exit()
+
+
+
+
 
 df = pd.DataFrame()
 
@@ -60,6 +113,9 @@ ax.scatter(df['x'],df['y'])
 ax.scatter(df['px'],df['py'])
 ax.set_aspect('equal')
 ax.grid()
+
+
+
 
 
 x = 0.04
