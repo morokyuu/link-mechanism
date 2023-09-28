@@ -38,7 +38,7 @@ def drawPolyline(ax,poly,color='blue'):
 r = 12
 L = 100
 Lx = 55
-NUM = 10
+NUM = 30
 
 class Link:
     def __init__(self,th):
@@ -70,17 +70,21 @@ class Link:
 
 
 
-Hview = tr(30,50) @ rotZ(np.pi)
+Hview1 = tr(-100,-50) @ rotZ(-np.pi/2)
+Hview2 = np.eye(3)
 
-for th in np.linspace(0, np.pi*2, 10):
+
+for th in np.linspace(0, np.pi*5, NUM):
     
     fig,ax = plt.subplots()
     
     l = Link(th)
-    l.dot(Hview)
+    l.dot(Hview2)
     l.draw(ax)
     
-    
+    l2 = Link(th)
+    l2.dot(Hview1)
+    l2.draw(ax)
     
     ax.set_xlim([-200,200])
     ax.set_ylim([-200,200])
