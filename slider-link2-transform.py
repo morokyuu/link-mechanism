@@ -43,7 +43,7 @@ NUM = 30
 class Link:
     def __init__(self,th):
         self.x = r * np.cos(th) * 2
-        self.y = r * np.sin(th) * 2
+        self.y = r * np.sin(th) * 1
         
         self.alpha = np.arctan(self.y/(Lx - self.x))
         l = np.sqrt((Lx - self.x)**2 + (0 - self.y)**2)
@@ -91,11 +91,13 @@ for th in np.linspace(0, np.pi*5, NUM):
     fig,ax = plt.subplots()
     
     l = Link(th)
-    l.dot(Hview1)
+    l.dot(Hview2)
     l.draw(ax)
     
+    Hl = l.getLinkCord()
+    
     sh = Shape()
-    sh.dot(Hview1 @ rotZ(-np.pi/2) @ tr(0,-170))
+    sh.dot(Hl @ Hview2 @ rotZ(-np.pi/2) @ tr(0,-70))
     sh.draw(ax)
     
     ax.set_xlim([-200,200])
@@ -113,100 +115,3 @@ sys.exit()
 
 
 
-
-df = pd.DataFrame()
-
-th = np.linspace(0.001,np.pi*2,NUM)
-x = r * np.cos(th)
-y = r * np.sin(th)
-alpha = np.arctan(y/Lx - x)
-l = np.sqrt((Lx - x)**2 + (0 - y)**2)
-px = (L - l)*np.cos(-alpha) + Lx
-py = (L - l)*np.sin(-alpha)
-
-df['x'] = x
-df['y'] = y
-df['alpha'] = alpha
-df['px'] = px
-df['py'] = py
-
-fig,ax = plt.subplots()
-ax.scatter(Lx,0)
-ax.scatter(df['x'],df['y'])
-ax.scatter(df['px'],df['py'])
-ax.set_aspect('equal')
-ax.grid()
-
-
-
-
-
-x = 0.04
-y = 0.005
-a= 0.2
-
-
-box = np.array([[r,r,-r,-r],[r,-r,-r,r],[1,1,1,1]])
-
-for i in range(df.shape[0]):
-    fig,ax = plt.subplots()
-    
-    a = df['alpha'][i]
-    px = df['px'][i]
-    py = df['py'][i]
-    
-    x,y = df['x'][i],df['y'][i]
-    px,py = df['px'][i],df['py'][i]
-    
-    ax.scatter(Lx,0)
-    ax.scatter(x,y)
-    ax.scatter(px,py)
-    drawLine(ax, x,y,px,py)
-    
-    boxd = tr(px,py) @ rotZ(a) @ box
-    drawPolyline(ax, boxd)
-
-    ax.set_xlim([-0.1,0.3])
-    ax.set_ylim([-0.1,0.1])
-    ax.set_aspect('equal')
-    ax.grid()
-    plt.savefig(f'{i}.png')
-
-
-#   ^^^ MEMO ---
-# df.iloc[18]
-# Out[385]: 
-# x        0.011350
-# y       -0.003896
-# alpha   -0.081998
-# px       0.110988
-# py       0.004601
-# Name: 18, dtype: float64
-
-# df.iloc[18].loc['alpha']
-# Out[386]: -0.08199839717794351
-
-
-
-
-
-
-
-
-#mat = np.vstack([x,y,px,py,th,alpha])
-#dat = mat.T
-
-
-# def drawLine(ax,x0,y0,x1,y1):
-#     ax.plot(np.array([x0,x1]),np.array([y0,y1]))
-
-# for n,m in enumerate(dat[:-1,:]):
-#     fig,ax = plt.subplots()
-#     ax.scatter(m[0],m[1])
-#     ax.scatter(m[2],m[3])
-#     drawLine(ax, m[0],m[1],m[2],m[3])
-#     ax.set_xlim([-0.1,0.3])
-#     ax.set_ylim([-0.1,0.1])
-#     ax.set_aspect('equal')
-#     ax.grid()
-#     plt.savefig(f'{n}.png')
