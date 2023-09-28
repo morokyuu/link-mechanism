@@ -82,10 +82,6 @@ for th in np.linspace(0, np.pi*5, NUM):
     l.dot(Hview2)
     l.draw(ax)
     
-    l2 = Link(th)
-    l2.dot(Hview1)
-    l2.draw(ax)
-    
     ax.set_xlim([-200,200])
     ax.set_ylim([-200,200])
     ax.set_aspect('equal')

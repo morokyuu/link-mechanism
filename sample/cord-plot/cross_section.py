@@ -24,7 +24,7 @@ arr = np.array([img[a,:,0] for a in row_num])
 pos = []
 for r,ar in enumerate(arr):
     left, right = 0,0
-    print(f"row={r}")
+    # print(f"row={r}")
     for i,a in enumerate(ar):
         if a < 100:
             left = i
@@ -35,7 +35,9 @@ for r,ar in enumerate(arr):
             right = i
             break
     
-    print(f'left,right = {left},{right}')
+    # print(f'left,right = {left},{right}')
+    print(f'{left},{r*10}')
+    print(f'{right},{r*10}')
             
             
 
