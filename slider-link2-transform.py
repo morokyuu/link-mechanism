@@ -38,7 +38,7 @@ def drawPolyline(ax,poly,color='blue'):
 r = 12
 L = 100
 Lx = 55
-NUM = 20
+NUM = 10
 
 class Link:
     def __init__(self,th):
@@ -58,9 +58,9 @@ class Link:
         return tr(self.px, self.py) @ rotZ(self.alpha)
     
     def dot(self,H):
-        self.xy1 = self.xy1 @ H
-        self.pxy1 = self.pxy1 @ H
-        self.slider1 = self.slider1 @ H
+        self.xy1 = H @ self.xy1
+        self.pxy1 = H @ self.pxy1
+        self.slider1 = H @ self.slider1
     
     def draw(self,ax):
         ax.scatter(self.xy1[0],self.xy1[1])
@@ -68,15 +68,22 @@ class Link:
         ax.scatter(self.slider1[0],self.slider1[1])
 
 
-for th in np.linspace(0, np.pi*2, 100):
+
+
+Hview = tr(30,50) @ rotZ(np.pi)
+
+for th in np.linspace(0, np.pi*2, 10):
     
     fig,ax = plt.subplots()
     
     l = Link(th)
+    l.dot(Hview)
     l.draw(ax)
     
-    ax.set_xlim([-100,200])
-    ax.set_ylim([-100,100])
+    
+    
+    ax.set_xlim([-200,200])
+    ax.set_ylim([-200,200])
     ax.set_aspect('equal')
     ax.grid()
     
