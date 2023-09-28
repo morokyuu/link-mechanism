@@ -67,10 +67,22 @@ class Link:
         ax.scatter(self.pxy1[0],self.pxy1[1])
         ax.scatter(self.slider1[0],self.slider1[1])
 
+class Shape:
+    def __init__(self):
+        df = pd.read_csv("foot.txt")
+        self.x = df['x']
+        self.y = df['y']
+        self.xy1 = np.vstack((self.x,self.y,np.ones(df['x'].shape[0])))
+    
+    def dot(self,H):
+        self.xy1 = H @ self.xy1
+    
+    def draw(self,ax):
+        ax.plot(self.xy1[0], self.xy1[1])
 
 
-
-Hview1 = tr(-100,-50) @ rotZ(-np.pi/2)
+# Hview1 = tr(-100,-50) @ rotZ(np.pi/2)
+Hview1 = tr(0,0) @ rotZ(np.pi/2)
 Hview2 = np.eye(3)
 
 
@@ -79,8 +91,12 @@ for th in np.linspace(0, np.pi*5, NUM):
     fig,ax = plt.subplots()
     
     l = Link(th)
-    l.dot(Hview2)
+    l.dot(Hview1)
     l.draw(ax)
+    
+    sh = Shape()
+    sh.dot(Hview1 @ rotZ(-np.pi/2) @ tr(0,-170))
+    sh.draw(ax)
     
     ax.set_xlim([-200,200])
     ax.set_ylim([-200,200])
