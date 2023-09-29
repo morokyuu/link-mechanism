@@ -80,6 +80,19 @@ class Shape:
     def draw(self,ax):
         ax.plot(self.xy1[0], self.xy1[1])
 
+class Bon:
+    def __init__(self):
+        df = pd.read_csv("bon.txt")
+        self.x = df['x']
+        self.y = df['y']
+        self.xy1 = np.vstack((self.x,self.y,np.ones(df['x'].shape[0])))
+    
+    def dot(self,H):
+        self.xy1 = H @ self.xy1
+    
+    def draw(self,ax):
+        ax.plot(self.xy1[0], self.xy1[1])
+
 
 # Hview1 = tr(-100,-50) @ rotZ(np.pi/2)
 Hview1 = tr(0,0) @ rotZ(np.pi/2)
@@ -99,6 +112,10 @@ for th in np.linspace(0, np.pi*5, NUM):
     sh = Shape()
     sh.dot(Hl @ Hview2 @ rotZ(-np.pi/2) @ tr(0,-70))
     sh.draw(ax)
+    
+    bon = Bon()
+    bon.dot(Hview2 @ rotZ(-np.pi/2) @ tr(0,-60))
+    bon.draw(ax)
     
     ax.set_xlim([-200,200])
     ax.set_ylim([-200,200])
