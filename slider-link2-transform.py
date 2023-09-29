@@ -35,27 +35,24 @@ def drawPolyline(ax,poly,color='blue'):
         drawLine(ax,poly[i,0],poly[i,1],poly[i+1,0],poly[i+1,1],color=color)
 
 
-r = 12
-L = 100
-Lx = 55
+r = 60 
 NUM = 30
 
 class Link:
     def __init__(self,th):
-        self.x = r * np.cos(th) * 2
-        self.y = r * np.sin(th) * 1
+        self.x = r * np.cos(th)
+        self.y = r * np.sin(th)
         
-        self.alpha = np.arctan(self.y/(Lx - self.x))
-        l = np.sqrt((Lx - self.x)**2 + (0 - self.y)**2)
-        self.px = (L - l)*np.cos(-self.alpha) + Lx
-        self.py = (L - l)*np.sin(-self.alpha)
+        self.px = 0
+        self.py = self.y
         
         self.xy1 = np.vstack((self.x,self.y,1))
         self.pxy1 = np.vstack((self.px,self.py,1))
-        self.slider1 = np.vstack((Lx,0,1))
+        self.slider1 = np.array([[-r,r],[self.py,self.py],[1,1]])
+        self.shaft = np.array([0,0,1])
     
     def getLinkCord(self):
-        return tr(self.px, self.py) @ rotZ(self.alpha)
+        return tr(self.px, self.py)
     
     def dot(self,H):
         self.xy1 = H @ self.xy1
@@ -65,7 +62,8 @@ class Link:
     def draw(self,ax):
         ax.scatter(self.xy1[0],self.xy1[1])
         ax.scatter(self.pxy1[0],self.pxy1[1])
-        ax.scatter(self.slider1[0],self.slider1[1])
+        ax.plot(self.slider1[0],self.slider1[1])
+        ax.scatter(self.shaft[0],self.shaft[1])
 
 class Shape:
     def __init__(self):
@@ -94,9 +92,9 @@ class Bon:
         ax.plot(self.xy1[0], self.xy1[1])
 
 
-# Hview1 = tr(-100,-50) @ rotZ(np.pi/2)
-Hview1 = tr(0,0) @ rotZ(np.pi/2)
-Hview2 = np.eye(3)
+Hview = tr(0,-50)
+#Hview = tr(0,0) @ rotZ(np.pi/2)
+#Hview = np.eye(3)
 
 
 for th in np.linspace(0, np.pi*5, NUM):
@@ -104,17 +102,18 @@ for th in np.linspace(0, np.pi*5, NUM):
     fig,ax = plt.subplots()
     
     l = Link(th)
-    l.dot(Hview2)
+    l.dot(Hview)
     l.draw(ax)
     
     Hl = l.getLinkCord()
     
     sh = Shape()
-    sh.dot(Hl @ Hview2 @ rotZ(-np.pi/2) @ tr(0,-70))
+    sh.dot(Hl @ Hview @ tr(0,-70))
+    #sh.dot(Hl @ Hview @ rotZ(-np.pi/2) @ tr(0,-70))
     sh.draw(ax)
     
     bon = Bon()
-    bon.dot(Hview2 @ rotZ(-np.pi/2) @ tr(0,-60))
+    bon.dot(Hview @ tr(0,20))
     bon.draw(ax)
     
     ax.set_xlim([-200,200])
