@@ -35,7 +35,7 @@ def drawPolyline(ax,poly,color='blue'):
         drawLine(ax,poly[i,0],poly[i,1],poly[i+1,0],poly[i+1,1],color=color)
 
 
-r = 60 
+r = 20 
 NUM = 200
 
 class Link:
