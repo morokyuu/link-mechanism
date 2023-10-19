@@ -36,11 +36,25 @@ def drawPolyline(ax,poly,color='blue'):
 
 r = 80 
 NUM = 200
+h = 40
 
-h = 43
+def push(cr_th, cr_y, ro_y):
+    th_t1 = np.arcsin(h/r)
+    th_t3 = np.arcsin(r-2*h) + np.pi/2.0
 
+    if 0 <= cr_th and cr_th < th_t1:
+        return ro_y
+    elif th_t1 <= cr_th and cr_th < np.pi/2.0:
+        return cr_y-h
+    elif np.pi/2.0 <= cr_th and cr_th < th_t3:
+        return cr_y
+    elif th_t3 <= cr_th and cr_th < 3*np.pi/2.0:
+        return ro_y
+    
 
-for th in np.linspace(0,2*np.pi,30):
+ro_y = 0
+# for th in np.linspace(0,2*np.pi,30):
+for th in np.linspace(0,np.pi,30):
     x = r * np.cos(th)
     y = r * np.sin(th)
 
@@ -48,13 +62,20 @@ for th in np.linspace(0,2*np.pi,30):
     
     ax.scatter(x,y)
     
+    ro_y = push(th,y,ro_y)
+    ax.scatter(0,ro_y)
+    
     ronoji = np.array([
         [r,r,-r,-r,r],
         [h,-h,-h,h,h],
-        [1,1,1,1]
+        [1,1,1,1,1]
         ])
     
+    ronoji = tr(0,ro_y) @ ronoji
+    
     ax.plot(ronoji[0],ronoji[1])
+    
+    
 
     ax.set_xlim([-200,200])
     ax.set_ylim([-200,200])
@@ -64,35 +85,3 @@ for th in np.linspace(0,2*np.pi,30):
     plt.show()
     
     plt.close()
-
-
-class Link:
-    def __init__(self,th):
-        self.x = r * np.cos(th)
-        self.y = r * np.sin(th)
-        
-        self.px = 0
-        self.py = self.y
-        
-        self.xy1 = np.vstack((self.x,self.y,1))
-        self.pxy1 = np.vstack((self.px,self.py,1))
-        self.slider1 = np.array([[-r,r],[self.py,self.py],[1,1]])
-        self.shaft = np.array([0,0,1])
-    
-    def getLinkCord(self):
-        return tr(self.px, self.py)
-    
-    def dot(self,H):
-        self.xy1 = H @ self.xy1
-        self.pxy1 = H @ self.pxy1
-        self.slider1 = H @ self.slider1
-    
-    def draw(self,ax):
-        ax.scatter(self.xy1[0],self.xy1[1])
-        ax.scatter(self.pxy1[0],self.pxy1[1])
-        ax.plot(self.slider1[0],self.slider1[1])
-        ax.scatter(self.shaft[0],self.shaft[1])
-
-
-
-
