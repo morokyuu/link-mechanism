@@ -34,27 +34,22 @@ def drawPolyline(ax,poly,color='blue'):
         drawLine(ax,poly[i,0],poly[i,1],poly[i+1,0],poly[i+1,1],color=color)
 
 
-r = 80 
+r = 50 
 NUM = 200
-h = 40
+h = 35
 
-def push(cr_th, cr_y, ro_y):
-    th_t1 = np.arcsin(h/r)
-    th_t3 = np.arcsin(r-2*h) + np.pi/2.0
-
-    if 0 <= cr_th and cr_th < th_t1:
-        return ro_y
-    elif th_t1 <= cr_th and cr_th < np.pi/2.0:
-        return cr_y-h
-    elif np.pi/2.0 <= cr_th and cr_th < th_t3:
-        return cr_y
-    elif th_t3 <= cr_th and cr_th < 3*np.pi/2.0:
+def push(cr_y, ro_y):
+    if cr_y >= ro_y + h:
+        return cr_y - h
+    elif cr_y < ro_y - h:
+        return cr_y + h
+    else:
         return ro_y
     
 
 ro_y = 0
-# for th in np.linspace(0,2*np.pi,30):
-for th in np.linspace(0,np.pi,30):
+for th in np.linspace(0,4*np.pi,30):
+# for th in np.linspace(0,np.pi,30):
     x = r * np.cos(th)
     y = r * np.sin(th)
 
@@ -62,7 +57,7 @@ for th in np.linspace(0,np.pi,30):
     
     ax.scatter(x,y)
     
-    ro_y = push(th,y,ro_y)
+    ro_y = push(y,ro_y)
     ax.scatter(0,ro_y)
     
     ronoji = np.array([
