@@ -75,14 +75,11 @@ class Link:
 
     def setPos(self,cr_y):
         self.ro_y = self._push(cr_y, self.ro_y)
-        print(f"{cr_y:5.1f}, {self.ro_y:5.1f}")
-        self.ronoji = tr(0,self.ro_y) @ self.ronoji
-    
-    def dot(self,H):
-        pass
+        #print(f"{cr_y:5.1f}, {self.ro_y:5.1f}")
     
     def draw(self,ax):
-        ax.plot(self.ronoji[0],self.ronoji[1])
+        obj = tr(0,self.ro_y) @ self.ronoji
+        ax.plot(obj[0],obj[1])
 
 class Shape:
     def __init__(self):

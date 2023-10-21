@@ -60,12 +60,14 @@ for th in np.linspace(0,4*np.pi,30):
     ro_y = push(y,ro_y)
     ax.scatter(0,ro_y)
     
+    #ronoji is set at original position for every loop
     ronoji = np.array([
         [r,r,-r,-r,r],
         [h,-h,-h,h,h],
         [1,1,1,1,1]
         ])
     
+    #transpose ronoji position
     ronoji = tr(0,ro_y) @ ronoji
     
     ax.plot(ronoji[0],ronoji[1])
