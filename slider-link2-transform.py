@@ -43,7 +43,7 @@ def drawPolyline(ax,poly,color='blue'):
         drawLine(ax,poly[i,0],poly[i,1],poly[i+1,0],poly[i+1,1],color=color)
 
 
-crank_r = 55 
+crank_r = 77
 NUM = 30
 
 class Crank:
@@ -119,24 +119,24 @@ class Bon:
         self.H = H
 
     def setPos(self,th):
-        self.shape = self.H @ rotZ(0.3*np.sin(th*3)) @ self.shape_ini
+        self.shape = self.H @ rotZ(0.1*np.sin(th*3)) @ self.shape_ini
     
     def draw(self,ax):
         ax.plot(self.shape[0], self.shape[1])
 
-bon = Bon(tr(0,-40))
-print(bon.length)
-sh = Shape(24,bon.length)
-slith = sh.getSlitHeight()
-print(slith)
-sh = Shape(16,bon.length)
-slith = sh.getSlitHeight()
-print(slith)
+# bon = Bon(tr(0,-40))
+# print(bon.length)
+# sh = Shape(24,bon.length)
+# slith = sh.getSlitHeight()
+# print(slith)
+# sh = Shape(16,bon.length)
+# slith = sh.getSlitHeight()
+# print(slith)
 
-sys.exit(0)
+# sys.exit(0)
 
-bon = Bon(tr(0,-40))
-sh = Shape(24,bon.length,tr(0,0))
+bon = Bon(tr(0,-50))
+sh = Shape(16,bon.length,tr(0,0))
 slith = sh.getSlitHeight()
 l = Link(slith)
 cr = Crank(rotZ(np.arctan(slith/crank_r)))
