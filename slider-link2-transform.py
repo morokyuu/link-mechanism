@@ -115,7 +115,8 @@ Hview = tr(0,-50)
 #Hview = np.eye(3)
 
 l = Link()
-cr = Crank(tr(100,100) @ rotZ(np.pi/3))
+#cr = Crank(rotZ(np.pi/3))
+cr = Crank()
 
 ro_y = 0
 for th in np.linspace(0, 2*np.pi, NUM):
