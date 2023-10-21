@@ -26,6 +26,13 @@ def tr(x,y):
         [          0,          0, 1.0]
         ])
 
+def scale(ratio):
+    return np.array([
+        [      ratio,          0, 0.0],
+        [          0,      ratio, 0.0],
+        [          0,          0, 1.0]
+        ])
+
 def drawLine(ax,x0,y0,x1,y1,color='blue'):
     ax.plot(np.array([x0,x1]),np.array([y0,y1]),color=color)
 
@@ -87,6 +94,8 @@ class Shape:
     def __init__(self,H=np.eye(3,3)):
         df = pd.read_csv("foot.txt")
         self.shape_ini = np.vstack((df['x'],df['y'],np.ones(df.shape[0])))
+        self.length = df['y'].max()
+        self.shape_ini = tr(0,-self.length/2.0) @ self.shape_ini
         self.H = H
     
     def setPos(self,ro_y):
@@ -116,7 +125,7 @@ Hview = tr(0,-50)
 l = Link()
 #cr = Crank(rotZ(np.pi/3))
 cr = Crank()
-sh = Shape()
+sh = Shape(tr(0,0))
 
 ro_y = 0
 for th in np.linspace(0, 2*np.pi, NUM):
