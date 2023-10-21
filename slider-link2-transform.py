@@ -43,9 +43,8 @@ def drawPolyline(ax,poly,color='blue'):
         drawLine(ax,poly[i,0],poly[i,1],poly[i+1,0],poly[i+1,1],color=color)
 
 
-crank_r = 50 
+crank_r = 55 
 NUM = 30
-slith = 35
 
 class Crank:
     def __init__(self,H=np.eye(3,3)):
@@ -65,10 +64,11 @@ class Crank:
         ax.scatter(self.shaft[0],self.shaft[1])
 
 class Link:
-    def __init__(self,H=np.eye(3,3)):
+    def __init__(self,slith,H=np.eye(3,3)):
+        self.slith = slith
         self.ronoji_ini = np.array([
             [crank_r,crank_r,-crank_r,-crank_r,crank_r],
-            [slith,-slith,-slith,slith,slith],
+            [self.slith,-self.slith,-self.slith,self.slith,self.slith],
             [1,1,1,1,1]
             ])
         self.ronoji = self.ronoji_ini * 1 #hard copy
@@ -76,10 +76,10 @@ class Link:
         self.H = H
 
     def _push(self, cr_y, ro_y):
-        if cr_y >= ro_y + slith:
-            return cr_y - slith
-        elif cr_y < ro_y - slith:
-            return cr_y + slith
+        if cr_y >= ro_y + self.slith:
+            return cr_y - self.slith
+        elif cr_y < ro_y - self.slith:
+            return cr_y + self.slith
         else:
             return ro_y
 
@@ -91,17 +91,21 @@ class Link:
         ax.plot(self.ronoji[0],self.ronoji[1])
 
 class Shape:
-    def __init__(self,size=24.0,H=np.eye(3,3)):
+    def __init__(self,size=24.0,bon_length=100,H=np.eye(3,3)):
         df = pd.read_csv("foot.txt")
         DATA_FOOTSIZE = 24.0
-        fscale = size/DATA_FOOTSIZE
+        self.fscale = size/DATA_FOOTSIZE
         self.shape_ini = np.vstack((df['x'],df['y'],np.ones(df.shape[0])))
-        self.length = df['y'].max() * fscale
-        self.shape_ini = tr(0,-self.length/2.0) @ scale(fscale) @ self.shape_ini
+        self.length = df['y'].max() * self.fscale
+        self.shape_ini = tr(0,-self.length/2.0) @ scale(self.fscale) @ self.shape_ini
+        self.bon_length = bon_length
         self.H = H
     
     def setPos(self,ro_y):
         self.shape = self.H @ tr(0,ro_y) @ self.shape_ini
+
+    def getSlitHeight(self):
+        return crank_r - (self.length - self.bon_length)/2.0
 
     def draw(self,ax):
         ax.plot(self.shape[0], self.shape[1])
@@ -110,6 +114,7 @@ class Bon:
     def __init__(self,H=np.eye(3,3)):
         df = pd.read_csv("bon.txt")
         self.shape_ini = np.vstack((df['x'],df['y'],np.ones(df.shape[0])))
+        self.length = df['y'].max()
         self.shape = self.shape_ini * 1 # hard copy
         self.H = H
 
@@ -119,16 +124,22 @@ class Bon:
     def draw(self,ax):
         ax.plot(self.shape[0], self.shape[1])
 
-
-Hview = tr(0,-50)
-#Hview = tr(0,0) @ rotZ(np.pi/2)
-#Hview = np.eye(3)
-
-l = Link()
-cr = Crank(rotZ(np.arctan(slith/crank_r)))
-#cr = Crank()
-sh = Shape(24,tr(0,0))
 bon = Bon(tr(0,-40))
+print(bon.length)
+sh = Shape(24,bon.length)
+slith = sh.getSlitHeight()
+print(slith)
+sh = Shape(16,bon.length)
+slith = sh.getSlitHeight()
+print(slith)
+
+sys.exit(0)
+
+bon = Bon(tr(0,-40))
+sh = Shape(24,bon.length,tr(0,0))
+slith = sh.getSlitHeight()
+l = Link(slith)
+cr = Crank(rotZ(np.arctan(slith/crank_r)))
 
 ro_y = 0
 for th in np.linspace(0, 2*np.pi, NUM):
