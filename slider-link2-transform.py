@@ -45,6 +45,12 @@ class Crank:
         self.xy_ini = np.array([[crank_r],[0],[1]])
         self.xy_cr = self.xy_ini * 1
         self.shaft = np.array([0,0,1])
+        # self.H = H
+
+    # def dot(self,H):
+    #     self.xy_ini = H @ self.xy_ini
+    #     self.xy_cr = H @ self.xy_cr
+    #     self.shaft = H @ self.shaft
 
     def setPos(self,th):
         self.xy_cr = rotZ(th) @ self.xy_ini
@@ -115,6 +121,8 @@ Hview = tr(0,-50)
 l = Link()
 cr = Crank()
 
+# cr.dot(tr(100,100) @ rotZ(np.pi/3))
+
 ro_y = 0
 for th in np.linspace(0, 2*np.pi, NUM):
     
@@ -122,7 +130,6 @@ for th in np.linspace(0, 2*np.pi, NUM):
     
     cr.setPos(th)
     cr.draw(ax)
-
     
     l.setPos(cr.getY())
     l.draw(ax)
