@@ -41,19 +41,14 @@ NUM = 15
 slith = 35
 
 class Crank:
-    def __init__(self):
+    def __init__(self,H):
         self.xy_ini = np.array([[crank_r],[0],[1]])
         self.xy_cr = self.xy_ini * 1
-        self.shaft = np.array([0,0,1])
-        # self.H = H
-
-    # def dot(self,H):
-    #     self.xy_ini = H @ self.xy_ini
-    #     self.xy_cr = H @ self.xy_cr
-    #     self.shaft = H @ self.shaft
+        self.H = H
 
     def setPos(self,th):
-        self.xy_cr = rotZ(th) @ self.xy_ini
+        self.xy_cr = self.H @ rotZ(th) @ self.xy_ini
+        self.shaft = self.H @ np.array([0,0,1])
 
     def getY(self):
         return self.xy_cr[1,0]
@@ -119,9 +114,7 @@ Hview = tr(0,-50)
 #Hview = np.eye(3)
 
 l = Link()
-cr = Crank()
-
-# cr.dot(tr(100,100) @ rotZ(np.pi/3))
+cr = Crank(tr(100,100) @ rotZ(np.pi/3))
 
 ro_y = 0
 for th in np.linspace(0, 2*np.pi, NUM):
