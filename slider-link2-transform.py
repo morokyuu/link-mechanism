@@ -11,6 +11,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import sys
 
+
+SAVEFIG = False
+# SAVEFIG = True
+crank_r = 77
+NUM = 30
+
 #right-hand-sys
 def rotZ(th):
     return np.array([
@@ -43,8 +49,6 @@ def drawPolyline(ax,poly,color='blue'):
         drawLine(ax,poly[i,0],poly[i,1],poly[i+1,0],poly[i+1,1],color=color)
 
 
-crank_r = 77
-NUM = 30
 
 class Crank:
     def __init__(self,H=np.eye(3,3)):
@@ -129,11 +133,11 @@ class Bon:
 bon = Bon(tr(0,-50))
 sh = Shape(20,bon.length,tr(0,0))
 slith = sh.getSlitHeight()
-l = Link(slith)
+l = Link(slith+15) #if bon overrun on border of shape, add some value to slith.
 cr = Crank(rotZ(np.arctan(slith/crank_r)))
 
 ro_y = 0
-for th in np.linspace(0, 2*np.pi, NUM):
+for n,th in enumerate(np.linspace(0, 2*np.pi, NUM)):
     
     fig,ax = plt.subplots()
     
@@ -154,7 +158,10 @@ for th in np.linspace(0, 2*np.pi, NUM):
     ax.set_aspect('equal')
     ax.grid()
     
-    plt.show()
+    if SAVEFIG:
+        plt.savefig(f"anim/{n}.png")
+    else:
+        plt.show()
     
     plt.close()
 
