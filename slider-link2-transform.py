@@ -91,11 +91,13 @@ class Link:
         ax.plot(self.ronoji[0],self.ronoji[1])
 
 class Shape:
-    def __init__(self,H=np.eye(3,3)):
+    def __init__(self,size=24.0,H=np.eye(3,3)):
         df = pd.read_csv("foot.txt")
+        DATA_FOOTSIZE = 24.0
+        fscale = size/DATA_FOOTSIZE
         self.shape_ini = np.vstack((df['x'],df['y'],np.ones(df.shape[0])))
-        self.length = df['y'].max()
-        self.shape_ini = tr(0,-self.length/2.0) @ self.shape_ini
+        self.length = df['y'].max() * fscale
+        self.shape_ini = tr(0,-self.length/2.0) @ scale(fscale) @ self.shape_ini
         self.H = H
     
     def setPos(self,ro_y):
@@ -105,17 +107,17 @@ class Shape:
         ax.plot(self.shape[0], self.shape[1])
 
 class Bon:
-    def __init__(self):
+    def __init__(self,H=np.eye(3,3)):
         df = pd.read_csv("bon.txt")
-        self.x = df['x']
-        self.y = df['y']
-        self.xy1 = np.vstack((self.x,self.y,np.ones(df['x'].shape[0])))
-    
-    def dot(self,H):
-        self.xy1 = H @ self.xy1
+        self.shape_ini = np.vstack((df['x'],df['y'],np.ones(df.shape[0])))
+        self.shape = self.shape_ini * 1 # hard copy
+        self.H = H
+
+    def setPos(self,th):
+        self.shape = self.H @ rotZ(0.3*np.sin(th*3)) @ self.shape_ini
     
     def draw(self,ax):
-        ax.plot(self.xy1[0], self.xy1[1])
+        ax.plot(self.shape[0], self.shape[1])
 
 
 Hview = tr(0,-50)
@@ -123,9 +125,10 @@ Hview = tr(0,-50)
 #Hview = np.eye(3)
 
 l = Link()
-#cr = Crank(rotZ(np.pi/3))
-cr = Crank()
-sh = Shape(tr(0,0))
+cr = Crank(rotZ(np.arctan(slith/crank_r)))
+#cr = Crank()
+sh = Shape(24,tr(0,0))
+bon = Bon(tr(0,-40))
 
 ro_y = 0
 for th in np.linspace(0, 2*np.pi, NUM):
@@ -140,6 +143,11 @@ for th in np.linspace(0, 2*np.pi, NUM):
     
     sh.setPos(l.ro_y)
     sh.draw(ax)
+
+    bon.setPos(th)
+    bon.draw(ax)
+
+
 #    Hl = l.getLinkCord()
 #    
 #    sh = Shape()
