@@ -124,19 +124,10 @@ class Bon:
     def draw(self,ax):
         ax.plot(self.shape[0], self.shape[1])
 
-# bon = Bon(tr(0,-40))
-# print(bon.length)
-# sh = Shape(24,bon.length)
-# slith = sh.getSlitHeight()
-# print(slith)
-# sh = Shape(16,bon.length)
-# slith = sh.getSlitHeight()
-# print(slith)
 
-# sys.exit(0)
 
 bon = Bon(tr(0,-50))
-sh = Shape(16,bon.length,tr(0,0))
+sh = Shape(20,bon.length,tr(0,0))
 slith = sh.getSlitHeight()
 l = Link(slith)
 cr = Crank(rotZ(np.arctan(slith/crank_r)))
@@ -158,20 +149,6 @@ for th in np.linspace(0, 2*np.pi, NUM):
     bon.setPos(th)
     bon.draw(ax)
 
-
-#    Hl = l.getLinkCord()
-#    
-#    sh = Shape()
-#    sh.dot(Hl @ Hview @ tr(0,-70))
-#    #sh.dot(Hl @ Hview @ rotZ(-np.pi/2) @ tr(0,-70))
-#    sh.draw(ax)
-    
-#    bon_tilt = rotZ(np.cos(th*10)*0.1)
-#    
-#    bon = Bon()
-#    bon.dot(Hview @ bon_tilt @ tr(0,20))
-#    bon.draw(ax)
-    
     ax.set_xlim([-200,200])
     ax.set_ylim([-200,200])
     ax.set_aspect('equal')
