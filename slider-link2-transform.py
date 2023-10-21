@@ -41,9 +41,9 @@ NUM = 15
 slith = 35
 
 class Crank:
-    def __init__(self,H):
+    def __init__(self,H=np.eye(3,3)):
         self.xy_ini = np.array([[crank_r],[0],[1]])
-        self.xy_cr = self.xy_ini * 1
+        self.xy_cr = self.xy_ini * 1 #hard copy
         self.H = H
 
     def setPos(self,th):
@@ -58,13 +58,15 @@ class Crank:
         ax.scatter(self.shaft[0],self.shaft[1])
 
 class Link:
-    def __init__(self):
-        self.ronoji = np.array([
+    def __init__(self,H=np.eye(3,3)):
+        self.ronoji_ini = np.array([
             [crank_r,crank_r,-crank_r,-crank_r,crank_r],
             [slith,-slith,-slith,slith,slith],
             [1,1,1,1,1]
             ])
+        self.ronoji = self.ronoji_ini * 1 #hard copy
         self.ro_y = 0
+        self.H = H
 
     def _push(self, cr_y, ro_y):
         if cr_y >= ro_y + slith:
@@ -76,11 +78,10 @@ class Link:
 
     def setPos(self,cr_y):
         self.ro_y = self._push(cr_y, self.ro_y)
-        #print(f"{cr_y:5.1f}, {self.ro_y:5.1f}")
+        self.ronoji = self.H @ (tr(0,self.ro_y) @ self.ronoji_ini)
     
     def draw(self,ax):
-        obj = tr(0,self.ro_y) @ self.ronoji
-        ax.plot(obj[0],obj[1])
+        ax.plot(self.ronoji[0],self.ronoji[1])
 
 class Shape:
     def __init__(self):
