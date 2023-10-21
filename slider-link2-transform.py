@@ -37,7 +37,7 @@ def drawPolyline(ax,poly,color='blue'):
 
 
 crank_r = 50 
-NUM = 15
+NUM = 30
 slith = 35
 
 class Crank:
@@ -84,17 +84,16 @@ class Link:
         ax.plot(self.ronoji[0],self.ronoji[1])
 
 class Shape:
-    def __init__(self):
+    def __init__(self,H=np.eye(3,3)):
         df = pd.read_csv("foot.txt")
-        self.x = df['x']
-        self.y = df['y']
-        self.xy1 = np.vstack((self.x,self.y,np.ones(df['x'].shape[0])))
+        self.shape_ini = np.vstack((df['x'],df['y'],np.ones(df.shape[0])))
+        self.H = H
     
-    def dot(self,H):
-        self.xy1 = H @ self.xy1
-    
+    def setPos(self,ro_y):
+        self.shape = self.H @ tr(0,ro_y) @ self.shape_ini
+
     def draw(self,ax):
-        ax.plot(self.xy1[0], self.xy1[1])
+        ax.plot(self.shape[0], self.shape[1])
 
 class Bon:
     def __init__(self):
@@ -117,6 +116,7 @@ Hview = tr(0,-50)
 l = Link()
 #cr = Crank(rotZ(np.pi/3))
 cr = Crank()
+sh = Shape()
 
 ro_y = 0
 for th in np.linspace(0, 2*np.pi, NUM):
@@ -129,6 +129,8 @@ for th in np.linspace(0, 2*np.pi, NUM):
     l.setPos(cr.getY())
     l.draw(ax)
     
+    sh.setPos(l.ro_y)
+    sh.draw(ax)
 #    Hl = l.getLinkCord()
 #    
 #    sh = Shape()
