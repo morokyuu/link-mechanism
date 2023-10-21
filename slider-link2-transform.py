@@ -11,10 +11,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import sys
 
+#right-hand-sys
 def rotZ(th):
     return np.array([
-        [ np.cos(th), np.sin(th), 0.0],
-        [-np.sin(th), np.cos(th), 0.0],
+        [ np.cos(th),-np.sin(th), 0.0],
+        [ np.sin(th), np.cos(th), 0.0],
         [          0,          0, 1.0]
         ])
 
@@ -22,6 +23,13 @@ def tr(x,y):
     return np.array([
         [        1.0,          0,   x],
         [          0,        1.0,   y],
+        [          0,          0, 1.0]
+        ])
+
+def scale(ratio):
+    return np.array([
+        [      ratio,          0, 0.0],
+        [          0,      ratio, 0.0],
         [          0,          0, 1.0]
         ])
 
@@ -35,48 +43,66 @@ def drawPolyline(ax,poly,color='blue'):
         drawLine(ax,poly[i,0],poly[i,1],poly[i+1,0],poly[i+1,1],color=color)
 
 
-r = 20 
-NUM = 200
+crank_r = 50 
+NUM = 30
+slith = 35
 
-class Link:
-    def __init__(self,th):
-        self.x = r * np.cos(th)
-        self.y = r * np.sin(th)
-        
-        self.px = 0
-        self.py = self.y
-        
-        self.xy1 = np.vstack((self.x,self.y,1))
-        self.pxy1 = np.vstack((self.px,self.py,1))
-        self.slider1 = np.array([[-r,r],[self.py,self.py],[1,1]])
-        self.shaft = np.array([0,0,1])
-    
-    def getLinkCord(self):
-        return tr(self.px, self.py)
-    
-    def dot(self,H):
-        self.xy1 = H @ self.xy1
-        self.pxy1 = H @ self.pxy1
-        self.slider1 = H @ self.slider1
-    
+class Crank:
+    def __init__(self,H=np.eye(3,3)):
+        self.xy_ini = np.array([[crank_r],[0],[1]])
+        self.xy_cr = self.xy_ini * 1 #hard copy
+        self.H = H
+
+    def setPos(self,th):
+        self.xy_cr = self.H @ rotZ(th) @ self.xy_ini
+        self.shaft = self.H @ np.array([0,0,1])
+
+    def getY(self):
+        return self.xy_cr[1,0]
+
     def draw(self,ax):
-        ax.scatter(self.xy1[0],self.xy1[1])
-        ax.scatter(self.pxy1[0],self.pxy1[1])
-        ax.plot(self.slider1[0],self.slider1[1])
+        ax.scatter(self.xy_cr[0],self.xy_cr[1])
         ax.scatter(self.shaft[0],self.shaft[1])
 
-class Shape:
-    def __init__(self):
-        df = pd.read_csv("foot.txt")
-        self.x = df['x']
-        self.y = df['y']
-        self.xy1 = np.vstack((self.x,self.y,np.ones(df['x'].shape[0])))
-    
-    def dot(self,H):
-        self.xy1 = H @ self.xy1
+class Link:
+    def __init__(self,H=np.eye(3,3)):
+        self.ronoji_ini = np.array([
+            [crank_r,crank_r,-crank_r,-crank_r,crank_r],
+            [slith,-slith,-slith,slith,slith],
+            [1,1,1,1,1]
+            ])
+        self.ronoji = self.ronoji_ini * 1 #hard copy
+        self.ro_y = 0
+        self.H = H
+
+    def _push(self, cr_y, ro_y):
+        if cr_y >= ro_y + slith:
+            return cr_y - slith
+        elif cr_y < ro_y - slith:
+            return cr_y + slith
+        else:
+            return ro_y
+
+    def setPos(self,cr_y):
+        self.ro_y = self._push(cr_y, self.ro_y)
+        self.ronoji = self.H @ (tr(0,self.ro_y) @ self.ronoji_ini)
     
     def draw(self,ax):
-        ax.plot(self.xy1[0], self.xy1[1])
+        ax.plot(self.ronoji[0],self.ronoji[1])
+
+class Shape:
+    def __init__(self,H=np.eye(3,3)):
+        df = pd.read_csv("foot.txt")
+        self.shape_ini = np.vstack((df['x'],df['y'],np.ones(df.shape[0])))
+        self.length = df['y'].max()
+        self.shape_ini = tr(0,-self.length/2.0) @ self.shape_ini
+        self.H = H
+    
+    def setPos(self,ro_y):
+        self.shape = self.H @ tr(0,ro_y) @ self.shape_ini
+
+    def draw(self,ax):
+        ax.plot(self.shape[0], self.shape[1])
 
 class Bon:
     def __init__(self):
@@ -96,27 +122,36 @@ Hview = tr(0,-50)
 #Hview = tr(0,0) @ rotZ(np.pi/2)
 #Hview = np.eye(3)
 
+l = Link()
+#cr = Crank(rotZ(np.pi/3))
+cr = Crank()
+sh = Shape(tr(0,0))
 
-for th in np.linspace(0, np.pi*10, NUM):
+ro_y = 0
+for th in np.linspace(0, 2*np.pi, NUM):
     
     fig,ax = plt.subplots()
     
-    l = Link(th)
-    l.dot(Hview)
+    cr.setPos(th)
+    cr.draw(ax)
+    
+    l.setPos(cr.getY())
     l.draw(ax)
     
-    Hl = l.getLinkCord()
-    
-    sh = Shape()
-    sh.dot(Hl @ Hview @ tr(0,-70))
-    #sh.dot(Hl @ Hview @ rotZ(-np.pi/2) @ tr(0,-70))
+    sh.setPos(l.ro_y)
     sh.draw(ax)
+#    Hl = l.getLinkCord()
+#    
+#    sh = Shape()
+#    sh.dot(Hl @ Hview @ tr(0,-70))
+#    #sh.dot(Hl @ Hview @ rotZ(-np.pi/2) @ tr(0,-70))
+#    sh.draw(ax)
     
-    bon_tilt = rotZ(np.cos(th*10)*0.1)
-    
-    bon = Bon()
-    bon.dot(Hview @ bon_tilt @ tr(0,20))
-    bon.draw(ax)
+#    bon_tilt = rotZ(np.cos(th*10)*0.1)
+#    
+#    bon = Bon()
+#    bon.dot(Hview @ bon_tilt @ tr(0,20))
+#    bon.draw(ax)
     
     ax.set_xlim([-200,200])
     ax.set_ylim([-200,200])

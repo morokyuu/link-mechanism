@@ -23,16 +23,25 @@ def tr(x,y):
         [          0,          0, 1.0]
         ])
 
-df = pd.read_csv("foot.txt",sep="\t")
+def scale(ratio):
+    return np.array([
+        [      ratio,          0, 0.0],
+        [          0,      ratio, 0.0],
+        [          0,          0, 1.0]
+        ])
 
+df = pd.read_csv("../foot.txt",sep=",")
 foot = np.vstack((df['x'],df['y'],np.ones(df.shape[0])))
-
 foot = np.hstack((foot, np.vstack((df['x'].head(1),df['y'].head(1),1))))
 
-foot = tr(109,250) @ rotZ(-np.pi) @ foot
+length = df['y'].max()
+foot = tr(0,-length/2) @ foot
+
+sc_foot = scale(16/24.0) @ foot
 
 fig,ax = plt.subplots()
 ax.plot(foot[0], foot[1])
+ax.plot(sc_foot[0], sc_foot[1])
 ax.grid()
 ax.set_aspect('equal')
 
